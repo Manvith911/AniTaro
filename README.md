@@ -1,6 +1,6 @@
 # AniTaro - Anime Streaming Web App
 
-AniTaro is an anime streaming web application built with React, Vite, TypeScript, Tailwind CSS, and Lovable Cloud (Supabase). It uses the **Kenjitsu API** (`https://kenjitsu.vercel.app`) as the primary anime data and streaming source, and the **AniList GraphQL API** for profile avatar images.
+AniTaro is an anime streaming web application built with React, Vite, TypeScript, Tailwind CSS, and Supabase. It uses the **Kenjitsu API** (`https://kenjitsu.vercel.app`) as the primary anime data and streaming source, and the **AniList GraphQL API** for profile avatar images.
 
 ## Features
 
@@ -48,16 +48,15 @@ Used to fetch top anime character images (sorted by favorites) for user profile 
 ### Prerequisites
 
 - Node.js 18+ and npm (or bun)
-- A Lovable account (for Cloud backend)
-
+- Supabase Account
 ### Local Development
 
 ```sh
 # 1. Clone the repository
-git clone <YOUR_GIT_URL>
+git clone https://github.com/Manvith911/AniTaro
 
 # 2. Navigate to the project directory
-cd <YOUR_PROJECT_NAME>
+cd AniTaro
 
 # 3. Install dependencies
 npm install
@@ -68,11 +67,10 @@ npm run dev
 
 ### Environment Variables
 
-The following environment variables are automatically configured by Lovable Cloud:
-
+Configure the following in Environment variables if hosted in vercel:
 | Variable | Description |
 |---|---|
-| `VITE_SUPABASE_URL` | Backend URL |
+| `VITE_SUPABASE_URL` | https://kenjitsu.vercel.app |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | Backend public/anon key |
 | `VITE_SUPABASE_PROJECT_ID` | Backend project ID |
 
@@ -80,7 +78,7 @@ The following environment variables are automatically configured by Lovable Clou
 
 ### Database Setup
 
-The database schema is managed via Lovable Cloud migrations. Key tables:
+The database schema is given in Migrations. Key tables:
 
 - **profiles** – User profiles (username, display name, avatar, bio, gender)
 - **watchlist** – User watchlist entries with status tracking
@@ -99,7 +97,7 @@ Two edge functions handle API proxying:
 1. **cors-proxy** – Proxies requests to the Kenjitsu API to avoid CORS issues
 2. **m3u8-proxy** – Proxies HLS video streams with proper headers
 
-These are deployed automatically by Lovable Cloud.
+Deploy these in Supabase
 
 ### Authentication
 
@@ -110,11 +108,7 @@ These are deployed automatically by Lovable Cloud.
 
 ## Deployment
 
-Open [Lovable](https://lovable.dev) and click **Share → Publish** to deploy your app.
-
-### Custom Domain
-
-To connect a custom domain, navigate to **Project → Settings → Domains** in Lovable.
+Open [AniTaro](https://anitaro.vercel.app)
 
 ## License
 
