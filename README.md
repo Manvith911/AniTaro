@@ -78,7 +78,7 @@ Configure the following in Environment variables if hosted in vercel:
 
 ### Database Setup
 
-The database schema is given in Migrations. Key tables:
+The database schema is given in Migrations [AniTaro/supabase/migrations]. Key tables:
 
 - **profiles** – User profiles (username, display name, avatar, bio, gender)
 - **watchlist** – User watchlist entries with status tracking
@@ -97,7 +97,7 @@ Two edge functions handle API proxying:
 1. **cors-proxy** – Proxies requests to the Kenjitsu API to avoid CORS issues
 2. **m3u8-proxy** – Proxies HLS video streams with proper headers
 
-Deploy these in Supabase
+Deploy these in Supabase given here [AniTaro/supabase/functions]
 
 ### Authentication
 
