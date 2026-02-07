@@ -1,0 +1,221 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Swiper styles */
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/free-mode";
+
+/* AniTaro Design System - Dark Anime Theme */
+
+@layer base {
+  :root {
+    /* Pure black backgrounds */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 95%;
+
+    /* Cards with subtle elevation */
+    --card: 0 0% 5%;
+    --card-foreground: 0 0% 95%;
+
+    /* Popover/dropdown surfaces */
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 95%;
+
+    /* White primary for buttons */
+    --primary: 0 0% 95%;
+    --primary-foreground: 0 0% 0%;
+
+    /* Purple secondary accent */
+    --secondary: 270 60% 55%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Muted surfaces */
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 50%;
+
+    /* Accent highlights */
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 95%;
+
+    /* Status colors */
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 76% 46%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 45 93% 58%;
+    --warning-foreground: 240 10% 4%;
+
+    /* Border and input */
+    --border: 0 0% 15%;
+    --input: 0 0% 10%;
+    --ring: 0 0% 95%;
+
+    --radius: 0.75rem;
+
+    /* Custom gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(0 0% 95%), hsl(0 0% 60%));
+    --gradient-spotlight: linear-gradient(180deg, transparent 0%, hsl(0 0% 0% / 0.3) 50%, hsl(0 0% 0%) 100%);
+    --gradient-card-hover: linear-gradient(180deg, hsl(0 0% 95% / 0.05) 0%, transparent 100%);
+    
+    /* Glow effects */
+    --glow-primary: 0 0 20px hsl(0 0% 95% / 0.2);
+    --glow-secondary: 0 0 20px hsl(0 0% 70% / 0.2);
+
+    /* Sidebar */
+    --sidebar-background: 0 0% 3%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 0 0% 95%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 0 0% 10%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 0 0% 15%;
+    --sidebar-ring: 0 0% 95%;
+  }
+
+  .dark {
+    /* Same as root - dark by default */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/50;
+  }
+}
+
+@layer utilities {
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-primary);
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: var(--glow-primary);
+  }
+
+  .glow-secondary {
+    box-shadow: var(--glow-secondary);
+  }
+
+  /* Card animations */
+  .card-hover {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .card-hover:hover {
+    @apply -translate-y-1 shadow-xl;
+    box-shadow: 0 10px 40px -15px hsl(0 0% 95% / 0.15);
+  }
+
+  /* Shimmer loading effect */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(0 0% 10%) 0%,
+      hsl(0 0% 15%) 50%,
+      hsl(0 0% 10%) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  /* Fade in animation */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Pulse glow animation */
+  .animate-pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% {
+      box-shadow: 0 0 10px hsl(0 0% 95% / 0.15);
+    }
+    50% {
+      box-shadow: 0 0 25px hsl(0 0% 95% / 0.3);
+    }
+  }
+
+  /* Spotlight gradient overlay */
+  .spotlight-overlay {
+    background: var(--gradient-spotlight);
+  }
+
+  /* Glass morphism */
+  .glass {
+    @apply bg-background/80 backdrop-blur-xl border border-border/50;
+  }
+
+  /* Line clamp utilities */
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
