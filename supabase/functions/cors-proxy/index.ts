@@ -6,7 +6,7 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
 };
 
-const BASE_API_URL = 'https://kenjitsu.vercel.app';
+const BASE_API_URL = 'https://kenjitsu.koyeb.app';
 
 serve(async (req) => {
   // Handle CORS preflight
@@ -41,8 +41,8 @@ serve(async (req) => {
         headers: {
           'Accept': 'application/json, text/plain, */*',
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-          'Referer': 'https://kenjitsu.vercel.app/',
-          'Origin': 'https://kenjitsu.vercel.app',
+          'Referer': 'https://kenjitsu.koyeb.app/',
+          'Origin': 'https://kenjitsu.koyeb.app',
         },
         signal: controller.signal,
       });
