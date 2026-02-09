@@ -39,8 +39,10 @@ serve(async (req) => {
       response = await fetch(targetUrl, {
         method: req.method,
         headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'AniTaro/1.0',
+          'Accept': 'application/json, text/plain, */*',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+          'Referer': 'https://kenjitsu.vercel.app/',
+          'Origin': 'https://kenjitsu.vercel.app',
         },
         signal: controller.signal,
       });
