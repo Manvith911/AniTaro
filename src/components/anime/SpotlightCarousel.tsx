@@ -65,7 +65,7 @@ export default function SpotlightCarousel({ animes }: SpotlightCarouselProps) {
 
       {/* Content */}
       <div className="absolute inset-0 flex items-center">
-        <div className="container mx-auto px-4">
+        <div className="w-full px-6 md:px-10 lg:px-16">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentIndex}
