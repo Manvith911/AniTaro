@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Play, Star, Clock, Calendar, Building2, Users, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import Header from "@/components/layout/Header";
 import AnimeCard from "@/components/anime/AnimeCard";
- import WatchlistButton from "@/components/anime/WatchlistButton";
+import WatchlistButton from "@/components/anime/WatchlistButton";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SkeletonDetails } from "@/components/ui/skeleton-card";
+import { ErrorState } from "@/components/ui/error-state";
 import { getAnimeDetails, getAnimeEpisodes, type AnimeDetails, type EpisodeData } from "@/lib/api";
 import { getContinueWatchingForAnime } from "@/hooks/useContinueWatching";
 
@@ -17,45 +19,35 @@ export default function AnimeDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchData() {
-      if (!id) return;
-      setLoading(true);
-      try {
-        const [details, episodes] = await Promise.all([
-          getAnimeDetails(id),
-          getAnimeEpisodes(id),
-        ]);
-        console.log('Anime details:', details);
-        console.log('Episodes:', episodes);
-        setData(details);
-        setEpisodesData(episodes);
-      } catch (err) {
-        console.error("Failed to fetch anime details:", err);
-        setError("Failed to load anime details.");
-      } finally {
-        setLoading(false);
-      }
+  const fetchData = useCallback(async () => {
+    if (!id) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const [details, episodes] = await Promise.all([
+        getAnimeDetails(id),
+        getAnimeEpisodes(id),
+      ]);
+      setData(details);
+      setEpisodesData(episodes);
+    } catch (err) {
+      console.error("Failed to fetch anime details:", err);
+      setError("Failed to load anime details. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    fetchData();
   }, [id]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
         <div className="pt-16">
-          <div className="h-[50vh] shimmer" />
-          <div className="container mx-auto px-4 -mt-32 relative z-10">
-            <div className="flex flex-col md:flex-row gap-8">
-              <div className="w-64 h-96 shimmer rounded-xl" />
-              <div className="flex-1 space-y-4">
-                <div className="h-10 w-3/4 shimmer rounded" />
-                <div className="h-6 w-1/2 shimmer rounded" />
-                <div className="h-32 w-full shimmer rounded" />
-              </div>
-            </div>
-          </div>
+          <SkeletonDetails />
         </div>
       </div>
     );
@@ -65,11 +57,8 @@ export default function AnimeDetailsPage() {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <div className="pt-16 flex items-center justify-center min-h-[60vh]">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-2">Anime not found</h2>
-            <p className="text-muted-foreground">{error}</p>
-          </div>
+        <div className="pt-16">
+          <ErrorState title="Anime not found" message={error || "Could not find this anime."} onRetry={fetchData} />
         </div>
       </div>
     );
@@ -132,7 +121,6 @@ export default function AnimeDetailsPage() {
 
           {/* Info */}
           <div className="flex-1 space-y-6">
-            {/* Title */}
             <div>
               <h1 className="text-3xl md:text-4xl font-bold">{info.name}</h1>
               {moreInfo.japanese && (
@@ -140,7 +128,6 @@ export default function AnimeDetailsPage() {
               )}
             </div>
 
-            {/* Stats */}
             <div className="flex flex-wrap items-center gap-4">
               {info.stats.rating && (
                 <div className="flex items-center gap-1 px-3 py-1.5 bg-warning/20 text-warning rounded-full">
@@ -165,7 +152,6 @@ export default function AnimeDetailsPage() {
               )}
             </div>
 
-            {/* Meta Info */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {moreInfo.aired && (
                 <div className="flex items-center gap-2 text-sm">
@@ -193,7 +179,6 @@ export default function AnimeDetailsPage() {
               )}
             </div>
 
-            {/* Genres */}
             {moreInfo.genres && moreInfo.genres.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {moreInfo.genres.map((genre) => (
@@ -208,7 +193,6 @@ export default function AnimeDetailsPage() {
               </div>
             )}
 
-            {/* Description */}
             <p className="text-muted-foreground leading-relaxed">
               {info.description}
             </p>
