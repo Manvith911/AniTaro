@@ -127,7 +127,7 @@ export async function getCategory(category: string, page = 1) {
 
 // Recent: completed, added, updated
 export async function getRecent(status: string, page = 1) {
-  const raw = await fetchFromProxy(`/api/kaido/anime/recent/${status}?page=${page}`);
+  const raw = await fetchFromApi(`/api/kaido/anime/recent/${status}?page=${page}`);
   return {
     animes: (raw.data || []).map(normalizeAnime),
     currentPage: raw.currentPage || 1,
