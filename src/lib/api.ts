@@ -160,7 +160,7 @@ export async function getFormat(format: string, page = 1) {
 
 // A-Z List
 export async function getAZList(sort: string, page = 1) {
-  const raw = await fetchFromProxy(`/api/kaido/anime/az-list/${sort}?page=${page}`);
+  const raw = await fetchFromApi(`/api/kaido/anime/az-list/${sort}?page=${page}`);
   return {
     animes: (raw.data || []).map(normalizeAnime),
     currentPage: raw.currentPage || 1,
