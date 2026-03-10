@@ -5,8 +5,11 @@ import { Navigation, FreeMode } from "swiper/modules";
 import AnimeCard from "./AnimeCard";
 import type { Anime } from "@/lib/api";
 
+// @ts-ignore
 import "swiper/css";
+// @ts-ignore
 import "swiper/css/navigation";
+// @ts-ignore
 import "swiper/css/free-mode";
 
 interface AnimeSwiperSectionProps {

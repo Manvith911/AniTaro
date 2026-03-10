@@ -276,7 +276,7 @@ export async function getEpisodeServers(episodeId: string): Promise<ServersData>
 
 // Episode Sources
 export async function getEpisodeSources(episodeId: string, version = 'sub', server = 'vidcloud'): Promise<SourcesData> {
-  const raw = await fetchFromProxy(`/api/kaido/sources/${episodeId}?version=${version}&server=${server}`);
+  const raw = await fetchFromApi(`/api/kaido/sources/${episodeId}?version=${version}&server=${server}`);
   const data = raw.data || raw;
   const referer = raw?.headers?.Referer || raw?.headers?.referer;
   
