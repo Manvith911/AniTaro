@@ -234,7 +234,7 @@ export async function getAnimeDetails(id: string): Promise<AnimeDetails> {
 
 // Episodes - uses the details endpoint which includes providerEpisodes
 export async function getAnimeEpisodes(id: string): Promise<EpisodeData> {
-  const raw = await fetchFromProxy(`/api/kaido/anime/${id}`);
+  const raw = await fetchFromApi(`/api/kaido/anime/${id}`);
   // Episodes come from providerEpisodes in the details response
   const episodes = raw.providerEpisodes || [];
   
