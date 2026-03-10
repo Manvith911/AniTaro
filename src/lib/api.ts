@@ -1,8 +1,8 @@
-const BASE_API_URL = 'https://kenjitsu.koyeb.app';
+const BASE_API_URL = import.meta.env.VITE_API_URL || 'https://kenjitsu.koyeb.app';
 
 const M3U8_PROXIES = [
-  'https://hianime-proxy-one.vercel.app/m3u8-proxy?url=',
-  'https://stream.animeparadise.moe/m3u8?url=',
+  import.meta.env.VITE_VIDCLOUD_PROXY || 'https://hianime-proxy-one.vercel.app/m3u8-proxy?url=',
+  import.meta.env.VITE_VIDSTREAMING_PROXY || 'https://stream.animeparadise.moe/m3u8?url=',
 ];
 
 let activeProxyIndex = 0;
