@@ -171,7 +171,7 @@ export async function getAZList(sort: string, page = 1) {
 
 // Anime Details
 export async function getAnimeDetails(id: string): Promise<AnimeDetails> {
-  const raw = await fetchFromProxy(`/api/kaido/anime/${id}`);
+  const raw = await fetchFromApi(`/api/kaido/anime/${id}`);
   const data = raw.data || raw;
   
   return {
