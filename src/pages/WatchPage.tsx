@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import Header from "@/components/layout/Header";
 import VideoPlayer from "@/components/player/VideoPlayer";
 import CommentSection from "@/components/comments/CommentSection";
+import { ErrorState } from "@/components/ui/error-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
