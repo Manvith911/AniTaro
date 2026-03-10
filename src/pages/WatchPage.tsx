@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
+
 import { ChevronLeft, ChevronRight, Captions, Mic, Radio, Settings, Search, Play, SkipForward, FastForward } from "lucide-react";
 import { motion } from "framer-motion";
 import Header from "@/components/layout/Header";
