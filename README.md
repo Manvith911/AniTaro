@@ -70,7 +70,7 @@ npm run dev
 Configure the following in Environment variables if hosted in vercel:
 | Variable | Description |
 |---|---|
-| `VITE_SUPABASE_URL` | https://kenjitsu.vercel.app |
+| `VITE_SUPABASE_URL` | Backend url |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | Backend public/anon key |
 | `VITE_SUPABASE_PROJECT_ID` | Backend project ID |
 
