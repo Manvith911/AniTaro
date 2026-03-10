@@ -116,7 +116,7 @@ export async function getSuggestions(query: string) {
 
 // Categories: subbed, dubbed, favourites, popular, airing
 export async function getCategory(category: string, page = 1) {
-  const raw = await fetchFromProxy(`/api/kaido/anime/category/${category}?page=${page}`);
+  const raw = await fetchFromApi(`/api/kaido/anime/category/${category}?page=${page}`);
   return {
     animes: (raw.data || []).map(normalizeAnime),
     currentPage: raw.currentPage || 1,
