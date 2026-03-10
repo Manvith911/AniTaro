@@ -1,18 +1,27 @@
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const BASE_API_URL = 'https://kenjitsu.koyeb.app';
 
-async function fetchFromProxy(path: string) {
-  const response = await fetch(
-    `${SUPABASE_URL}/functions/v1/cors-proxy?path=${encodeURIComponent(path)}`
-  );
+const M3U8_PROXIES = [
+  'https://hianime-proxy-one.vercel.app/m3u8-proxy?url=',
+  'https://stream.animeparadise.moe/m3u8?url=',
+];
+
+let activeProxyIndex = 0;
+
+async function fetchFromApi(path: string) {
+  const response = await fetch(`${BASE_API_URL}${path}`);
   if (!response.ok) {
     throw new Error(`API request failed: ${response.status}`);
   }
   return response.json();
 }
 
-export function getM3U8ProxyUrl(url: string, referer?: string) {
-  const base = `${SUPABASE_URL}/functions/v1/m3u8-proxy?url=${encodeURIComponent(url)}`;
-  return referer ? `${base}&referer=${encodeURIComponent(referer)}` : base;
+export function getM3U8ProxyUrl(url: string, _referer?: string) {
+  return `${M3U8_PROXIES[activeProxyIndex]}${encodeURIComponent(url)}`;
+}
+
+export function switchToNextProxy() {
+  activeProxyIndex = (activeProxyIndex + 1) % M3U8_PROXIES.length;
+  return activeProxyIndex;
 }
 
 // Normalize anime object from API response
