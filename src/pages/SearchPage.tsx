@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import AnimeCard from "@/components/anime/AnimeCard";
 import { SkeletonCard } from "@/components/ui/skeleton-card";
+import { ErrorState } from "@/components/ui/error-state";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
@@ -23,24 +24,28 @@ export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState(query);
   const [results, setResults] = useState<SearchResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchResults = async () => {
+    if (!query) {
+      setResults(null);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await searchAnime(query, page);
+      setResults(data);
+    } catch (err) {
+      console.error("Search failed:", err);
+      setError("Search failed. Please try again.");
+      setResults(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchResults() {
-      if (!query) {
-        setResults(null);
-        return;
-      }
-      setLoading(true);
-      try {
-        const data = await searchAnime(query, page);
-        setResults(data);
-      } catch (error) {
-        console.error("Search failed:", error);
-        setResults(null);
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchResults();
   }, [query, page]);
 
@@ -62,7 +67,6 @@ export default function SearchPage() {
       
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4">
-          {/* Search Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-4">Search Anime</h1>
             <form onSubmit={handleSearch} className="flex gap-2 max-w-xl">
@@ -82,20 +86,21 @@ export default function SearchPage() {
             </form>
           </div>
 
-          {/* Search Results */}
-          {query && (
+          {query && !error && (
             <div className="mb-4">
               <p className="text-muted-foreground">
                 {loading
                   ? "Searching..."
-                  : results
+                  : results?.animes.length
                   ? `Found results for "${query}"`
                   : `No results for "${query}"`}
               </p>
             </div>
           )}
 
-          {loading ? (
+          {error ? (
+            <ErrorState message={error} onRetry={fetchResults} showHomeLink={false} />
+          ) : loading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
               {Array.from({ length: 12 }).map((_, i) => (
                 <SkeletonCard key={i} />
@@ -109,7 +114,6 @@ export default function SearchPage() {
                 ))}
               </div>
 
-              {/* Pagination */}
               {results.totalPages > 1 && (
                 <div className="flex items-center justify-center gap-4 mt-8">
                   <Button

@@ -1,24 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import AnimeCard from "@/components/anime/AnimeCard";
 import { SkeletonCard } from "@/components/ui/skeleton-card";
+import { ErrorState } from "@/components/ui/error-state";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getCategory, getRecent, getGenre, getFormat, getHome, type Anime, type HomeData } from "@/lib/api";
 
 const categoryTitles: Record<string, string> = {
-  // Category endpoints
   "subbed": "Subbed Anime",
   "dubbed": "Dubbed Anime",
   "favourites": "Most Favorite",
   "popular": "Most Popular",
   "airing": "Currently Airing",
-  // Recent endpoints
   "completed": "Recently Completed",
   "added": "Recently Added",
   "updated": "Recently Updated",
-  // Format endpoints
   "tv": "TV Series",
   "movie": "Movies",
   "ova": "OVA",
@@ -26,7 +24,6 @@ const categoryTitles: Record<string, string> = {
   "specials": "Specials",
 };
 
-// Map categories to home data fields for fallback
 const categoryToHomeField: Record<string, keyof HomeData> = {
   "popular": "mostPopularAnimes",
   "airing": "topAiringAnimes",
@@ -49,83 +46,77 @@ export default function CategoryPage() {
 
   const pageKey = category || genre || status || "";
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      setError(null);
+  const fetchData = useCallback(async () => {
+    if (!pageKey) return;
+    setLoading(true);
+    setError(null);
+    
+    try {
+      let data;
       
-      try {
-        let data;
-        
-        if (category) {
-          // Check if it's a format (TV, MOVIE, etc.)
-          if (['tv', 'movie', 'ova', 'ona', 'specials'].includes(category.toLowerCase())) {
-            data = await getFormat(category.toUpperCase(), page);
-          } else {
-            // Regular category: subbed, dubbed, favourites, popular, airing
-            data = await getCategory(category, page);
-          }
-        } else if (genre) {
-          data = await getGenre(genre, page);
-        } else if (status) {
-          // Recent: completed, added, updated
-          data = await getRecent(status, page);
-        }
-        
-        if (data?.animes && data.animes.length > 0) {
-          setAnimes(data.animes);
-          setHasNextPage(data.hasNextPage || false);
-          setTotalPages(data.totalPages || 1);
+      if (category) {
+        if (['tv', 'movie', 'ova', 'ona', 'specials'].includes(category.toLowerCase())) {
+          data = await getFormat(category.toUpperCase(), page);
         } else {
-          // Fallback: Try home data
-          const homeKey = categoryToHomeField[pageKey];
-          if (homeKey) {
-            const homeData = await getHome();
-            const fallbackAnimes = homeData[homeKey];
-            if (Array.isArray(fallbackAnimes) && fallbackAnimes.length > 0) {
-              setAnimes(fallbackAnimes as Anime[]);
-              setHasNextPage(false);
-              setTotalPages(1);
-            } else {
-              setAnimes([]);
-              setError("This category is temporarily unavailable.");
-            }
-          } else {
-            setAnimes([]);
-          }
+          data = await getCategory(category, page);
         }
-      } catch (err) {
-        console.error("Failed to fetch category:", err);
-        
-        // Try fallback
+      } else if (genre) {
+        data = await getGenre(genre, page);
+      } else if (status) {
+        data = await getRecent(status, page);
+      }
+      
+      if (data?.animes && data.animes.length > 0) {
+        setAnimes(data.animes);
+        setHasNextPage(data.hasNextPage || false);
+        setTotalPages(data.totalPages || 1);
+      } else {
         const homeKey = categoryToHomeField[pageKey];
         if (homeKey) {
-          try {
-            const homeData = await getHome();
-            const fallbackAnimes = homeData[homeKey];
-            if (Array.isArray(fallbackAnimes) && fallbackAnimes.length > 0) {
-              setAnimes(fallbackAnimes as Anime[]);
-              setHasNextPage(false);
-              setTotalPages(1);
-              setLoading(false);
-              return;
-            }
-          } catch {
-            // Ignore fallback error
+          const homeData = await getHome();
+          const fallbackAnimes = homeData[homeKey];
+          if (Array.isArray(fallbackAnimes) && fallbackAnimes.length > 0) {
+            setAnimes(fallbackAnimes as Anime[]);
+            setHasNextPage(false);
+            setTotalPages(1);
+          } else {
+            setAnimes([]);
+            setError("This category is temporarily unavailable.");
           }
+        } else {
+          setAnimes([]);
         }
-        
-        setAnimes([]);
-        setError("Failed to load content. The external API may be experiencing issues.");
-      } finally {
-        setLoading(false);
       }
-    }
-    
-    if (pageKey) {
-      fetchData();
+    } catch (err) {
+      console.error("Failed to fetch category:", err);
+      
+      const homeKey = categoryToHomeField[pageKey];
+      if (homeKey) {
+        try {
+          const homeData = await getHome();
+          const fallbackAnimes = homeData[homeKey];
+          if (Array.isArray(fallbackAnimes) && fallbackAnimes.length > 0) {
+            setAnimes(fallbackAnimes as Anime[]);
+            setHasNextPage(false);
+            setTotalPages(1);
+            setLoading(false);
+            return;
+          }
+        } catch {
+          // Ignore fallback error
+        }
+      }
+      
+      setAnimes([]);
+      setError("Failed to load content. Please try again.");
+    } finally {
+      setLoading(false);
     }
   }, [category, genre, status, pageKey, page]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const changePage = (newPage: number) => {
     setSearchParams({ page: newPage.toString() });
@@ -151,15 +142,7 @@ export default function CategoryPage() {
               ))}
             </div>
           ) : error ? (
-            <div className="text-center py-16">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-4">
-                <AlertCircle className="w-8 h-8 text-muted-foreground" />
-              </div>
-              <p className="text-lg text-muted-foreground mb-2">{error}</p>
-              <p className="text-sm text-muted-foreground">
-                Try browsing from the home page or search for specific anime.
-              </p>
-            </div>
+            <ErrorState message={error} onRetry={fetchData} />
           ) : animes.length > 0 ? (
             <>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
@@ -168,7 +151,6 @@ export default function CategoryPage() {
                 ))}
               </div>
 
-              {/* Pagination */}
               {totalPages > 1 && (
                 <div className="flex items-center justify-center gap-4 mt-8">
                   <Button
