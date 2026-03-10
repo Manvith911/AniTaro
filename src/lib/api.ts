@@ -253,7 +253,7 @@ export async function getAnimeEpisodes(id: string): Promise<EpisodeData> {
 
 // Episode Servers
 export async function getEpisodeServers(episodeId: string): Promise<ServersData> {
-  const raw = await fetchFromProxy(`/api/kaido/episode/${episodeId}/servers`);
+  const raw = await fetchFromApi(`/api/kaido/episode/${episodeId}/servers`);
   const data = raw.data || raw;
   
   return {
