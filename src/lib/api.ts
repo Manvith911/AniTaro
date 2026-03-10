@@ -138,7 +138,7 @@ export async function getRecent(status: string, page = 1) {
 
 // Genre
 export async function getGenre(genre: string, page = 1) {
-  const raw = await fetchFromProxy(`/api/kaido/anime/genre/${genre}?page=${page}`);
+  const raw = await fetchFromApi(`/api/kaido/anime/genre/${genre}?page=${page}`);
   return {
     animes: (raw.data || []).map(normalizeAnime),
     currentPage: raw.currentPage || 1,
