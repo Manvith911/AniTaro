@@ -208,12 +208,38 @@ export default function WatchPage() {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <div className="pt-16">
-          <div className="container mx-auto px-4 py-8">
-            <div className="aspect-video shimmer rounded-xl" />
-            <div className="mt-6 space-y-4">
-              <div className="h-8 w-1/2 shimmer rounded" />
-              <div className="h-6 w-1/4 shimmer rounded" />
+        <div className="pt-20">
+          <div className="container mx-auto px-4 py-4 animate-fade-in">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-4 w-12 shimmer rounded" />
+              <div className="h-4 w-4 shimmer rounded" />
+              <div className="h-4 w-32 shimmer rounded" />
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8">
+              <div className="lg:col-span-2 space-y-4">
+                <div className="aspect-video shimmer rounded-xl" />
+                <div className="flex justify-between">
+                  <div className="h-10 w-28 shimmer rounded-lg" />
+                  <div className="h-5 w-24 shimmer rounded self-center" />
+                  <div className="h-10 w-28 shimmer rounded-lg" />
+                </div>
+                <div className="p-4 bg-card rounded-xl space-y-3">
+                  <div className="h-5 w-20 shimmer rounded" />
+                  <div className="flex gap-2">
+                    <div className="h-8 w-16 shimmer rounded-lg" />
+                    <div className="h-8 w-16 shimmer rounded-lg" />
+                  </div>
+                </div>
+              </div>
+              <div className="lg:col-span-1">
+                <div className="h-7 w-24 shimmer rounded-lg mb-4" />
+                <div className="bg-card rounded-xl p-3 space-y-2">
+                  <div className="h-10 shimmer rounded-lg" />
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="h-12 shimmer rounded-lg" />
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -225,11 +251,8 @@ export default function WatchPage() {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <div className="pt-16 flex items-center justify-center min-h-[60vh]">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-2">Something went wrong</h2>
-            <p className="text-muted-foreground">{error}</p>
-          </div>
+        <div className="pt-16">
+          <ErrorState message={error || "Failed to load anime."} onRetry={() => window.location.reload()} />
         </div>
       </div>
     );
