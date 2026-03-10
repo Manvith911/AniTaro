@@ -60,7 +60,7 @@ function normalizeSpotlightAnime(anime: RawSpotlightAnime): SpotlightAnime {
 
 // Home - returns normalized data matching API structure
 export async function getHome(): Promise<HomeData> {
-  const raw = await fetchFromProxy('/api/kaido/home');
+  const raw = await fetchFromApi('/api/kaido/home');
   
   // Map API response to our normalized structure
   const spotlightAnimes = (raw.data || []).map(normalizeSpotlightAnime);
