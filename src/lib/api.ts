@@ -108,7 +108,7 @@ export async function searchAnime(query: string, page = 1) {
 
 // Suggestions - returns data array
 export async function getSuggestions(query: string) {
-  const raw = await fetchFromProxy(`/api/kaido/anime/suggestions?q=${encodeURIComponent(query)}`);
+  const raw = await fetchFromApi(`/api/kaido/anime/suggestions?q=${encodeURIComponent(query)}`);
   return {
     suggestions: (raw.data || []).map(normalizeAnime),
   };
