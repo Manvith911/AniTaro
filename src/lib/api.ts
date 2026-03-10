@@ -1,18 +1,27 @@
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const BASE_API_URL = 'https://kenjitsu.koyeb.app';
 
-async function fetchFromProxy(path: string) {
-  const response = await fetch(
-    `${SUPABASE_URL}/functions/v1/cors-proxy?path=${encodeURIComponent(path)}`
-  );
+const M3U8_PROXIES = [
+  'https://hianime-proxy-one.vercel.app/m3u8-proxy?url=',
+  'https://stream.animeparadise.moe/m3u8?url=',
+];
+
+let activeProxyIndex = 0;
+
+async function fetchFromApi(path: string) {
+  const response = await fetch(`${BASE_API_URL}${path}`);
   if (!response.ok) {
     throw new Error(`API request failed: ${response.status}`);
   }
   return response.json();
 }
 
-export function getM3U8ProxyUrl(url: string, referer?: string) {
-  const base = `${SUPABASE_URL}/functions/v1/m3u8-proxy?url=${encodeURIComponent(url)}`;
-  return referer ? `${base}&referer=${encodeURIComponent(referer)}` : base;
+export function getM3U8ProxyUrl(url: string, _referer?: string) {
+  return `${M3U8_PROXIES[activeProxyIndex]}${encodeURIComponent(url)}`;
+}
+
+export function switchToNextProxy() {
+  activeProxyIndex = (activeProxyIndex + 1) % M3U8_PROXIES.length;
+  return activeProxyIndex;
 }
 
 // Normalize anime object from API response
@@ -51,7 +60,7 @@ function normalizeSpotlightAnime(anime: RawSpotlightAnime): SpotlightAnime {
 
 // Home - returns normalized data matching API structure
 export async function getHome(): Promise<HomeData> {
-  const raw = await fetchFromProxy('/api/kaido/home');
+  const raw = await fetchFromApi('/api/kaido/home');
   
   // Map API response to our normalized structure
   const spotlightAnimes = (raw.data || []).map(normalizeSpotlightAnime);
@@ -88,7 +97,7 @@ export async function getHome(): Promise<HomeData> {
 
 // Search - returns data array
 export async function searchAnime(query: string, page = 1) {
-  const raw = await fetchFromProxy(`/api/kaido/anime/search?q=${encodeURIComponent(query)}&page=${page}`);
+  const raw = await fetchFromApi(`/api/kaido/anime/search?q=${encodeURIComponent(query)}&page=${page}`);
   return {
     animes: (raw.data || []).map(normalizeAnime),
     currentPage: raw.currentPage || page,
@@ -99,7 +108,7 @@ export async function searchAnime(query: string, page = 1) {
 
 // Suggestions - returns data array
 export async function getSuggestions(query: string) {
-  const raw = await fetchFromProxy(`/api/kaido/anime/suggestions?q=${encodeURIComponent(query)}`);
+  const raw = await fetchFromApi(`/api/kaido/anime/suggestions?q=${encodeURIComponent(query)}`);
   return {
     suggestions: (raw.data || []).map(normalizeAnime),
   };
@@ -107,7 +116,7 @@ export async function getSuggestions(query: string) {
 
 // Categories: subbed, dubbed, favourites, popular, airing
 export async function getCategory(category: string, page = 1) {
-  const raw = await fetchFromProxy(`/api/kaido/anime/category/${category}?page=${page}`);
+  const raw = await fetchFromApi(`/api/kaido/anime/category/${category}?page=${page}`);
   return {
     animes: (raw.data || []).map(normalizeAnime),
     currentPage: raw.currentPage || 1,
@@ -118,7 +127,7 @@ export async function getCategory(category: string, page = 1) {
 
 // Recent: completed, added, updated
 export async function getRecent(status: string, page = 1) {
-  const raw = await fetchFromProxy(`/api/kaido/anime/recent/${status}?page=${page}`);
+  const raw = await fetchFromApi(`/api/kaido/anime/recent/${status}?page=${page}`);
   return {
     animes: (raw.data || []).map(normalizeAnime),
     currentPage: raw.currentPage || 1,
@@ -129,7 +138,7 @@ export async function getRecent(status: string, page = 1) {
 
 // Genre
 export async function getGenre(genre: string, page = 1) {
-  const raw = await fetchFromProxy(`/api/kaido/anime/genre/${genre}?page=${page}`);
+  const raw = await fetchFromApi(`/api/kaido/anime/genre/${genre}?page=${page}`);
   return {
     animes: (raw.data || []).map(normalizeAnime),
     currentPage: raw.currentPage || 1,
@@ -140,7 +149,7 @@ export async function getGenre(genre: string, page = 1) {
 
 // Format: TV, MOVIE, SPECIALS, OVA, ONA
 export async function getFormat(format: string, page = 1) {
-  const raw = await fetchFromProxy(`/api/kaido/anime/format/${format}?page=${page}`);
+  const raw = await fetchFromApi(`/api/kaido/anime/format/${format}?page=${page}`);
   return {
     animes: (raw.data || []).map(normalizeAnime),
     currentPage: raw.currentPage || 1,
@@ -151,7 +160,7 @@ export async function getFormat(format: string, page = 1) {
 
 // A-Z List
 export async function getAZList(sort: string, page = 1) {
-  const raw = await fetchFromProxy(`/api/kaido/anime/az-list/${sort}?page=${page}`);
+  const raw = await fetchFromApi(`/api/kaido/anime/az-list/${sort}?page=${page}`);
   return {
     animes: (raw.data || []).map(normalizeAnime),
     currentPage: raw.currentPage || 1,
@@ -162,7 +171,7 @@ export async function getAZList(sort: string, page = 1) {
 
 // Anime Details
 export async function getAnimeDetails(id: string): Promise<AnimeDetails> {
-  const raw = await fetchFromProxy(`/api/kaido/anime/${id}`);
+  const raw = await fetchFromApi(`/api/kaido/anime/${id}`);
   const data = raw.data || raw;
   
   return {
@@ -225,7 +234,7 @@ export async function getAnimeDetails(id: string): Promise<AnimeDetails> {
 
 // Episodes - uses the details endpoint which includes providerEpisodes
 export async function getAnimeEpisodes(id: string): Promise<EpisodeData> {
-  const raw = await fetchFromProxy(`/api/kaido/anime/${id}`);
+  const raw = await fetchFromApi(`/api/kaido/anime/${id}`);
   // Episodes come from providerEpisodes in the details response
   const episodes = raw.providerEpisodes || [];
   
@@ -244,7 +253,7 @@ export async function getAnimeEpisodes(id: string): Promise<EpisodeData> {
 
 // Episode Servers
 export async function getEpisodeServers(episodeId: string): Promise<ServersData> {
-  const raw = await fetchFromProxy(`/api/kaido/episode/${episodeId}/servers`);
+  const raw = await fetchFromApi(`/api/kaido/episode/${episodeId}/servers`);
   const data = raw.data || raw;
   
   return {
@@ -267,7 +276,7 @@ export async function getEpisodeServers(episodeId: string): Promise<ServersData>
 
 // Episode Sources
 export async function getEpisodeSources(episodeId: string, version = 'sub', server = 'vidcloud'): Promise<SourcesData> {
-  const raw = await fetchFromProxy(`/api/kaido/sources/${episodeId}?version=${version}&server=${server}`);
+  const raw = await fetchFromApi(`/api/kaido/sources/${episodeId}?version=${version}&server=${server}`);
   const data = raw.data || raw;
   const referer = raw?.headers?.Referer || raw?.headers?.referer;
   

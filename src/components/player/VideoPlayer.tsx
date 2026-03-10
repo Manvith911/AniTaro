@@ -39,7 +39,7 @@ export default function VideoPlayer({
 
     const subtitleTracks = sources.subtitles?.map((sub: Subtitle) => ({
       html: sub.label,
-      url: getM3U8ProxyUrl(sub.file, sources.referer),
+      url: sub.file,
       default: sub.default || false,
     })) || [];
 
