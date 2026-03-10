@@ -97,7 +97,7 @@ export async function getHome(): Promise<HomeData> {
 
 // Search - returns data array
 export async function searchAnime(query: string, page = 1) {
-  const raw = await fetchFromProxy(`/api/kaido/anime/search?q=${encodeURIComponent(query)}&page=${page}`);
+  const raw = await fetchFromApi(`/api/kaido/anime/search?q=${encodeURIComponent(query)}&page=${page}`);
   return {
     animes: (raw.data || []).map(normalizeAnime),
     currentPage: raw.currentPage || page,
