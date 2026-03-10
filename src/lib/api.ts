@@ -149,7 +149,7 @@ export async function getGenre(genre: string, page = 1) {
 
 // Format: TV, MOVIE, SPECIALS, OVA, ONA
 export async function getFormat(format: string, page = 1) {
-  const raw = await fetchFromProxy(`/api/kaido/anime/format/${format}?page=${page}`);
+  const raw = await fetchFromApi(`/api/kaido/anime/format/${format}?page=${page}`);
   return {
     animes: (raw.data || []).map(normalizeAnime),
     currentPage: raw.currentPage || 1,
